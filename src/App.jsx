@@ -12,6 +12,7 @@ import Home from './pages/Home'
 import StudentDashboard from './pages/student/Dashboard'
 import TeacherDashboard from './pages/teacher/Dashboard'
 import CreateCourse from './pages/teacher/CreateCourse'
+import EditCourse from './pages/teacher/EditCourse'
 import ManageCourse from './pages/teacher/ManageCourse'
 import CreateChapter from './pages/teacher/CreateChapter'
 import CreateQuiz from './pages/teacher/CreateQuiz'
@@ -43,6 +44,7 @@ function App() {
           {/* Routes Enseignant */}
           <Route path="/teacher/dashboard" element={<PrivateRoute role="TEACHER"><TeacherDashboard /></PrivateRoute>} />
           <Route path="/teacher/create-course" element={<PrivateRoute role="TEACHER"><CreateCourse /></PrivateRoute>} />
+          <Route path="/teacher/edit-course/:id" element={<PrivateRoute role="TEACHER"><EditCourse /></PrivateRoute>} />
           <Route path="/teacher/manage-course/:id" element={<PrivateRoute role="TEACHER"><ManageCourse /></PrivateRoute>} />
           <Route path="/teacher/create-chapter/:courseId" element={<PrivateRoute role="TEACHER"><CreateChapter /></PrivateRoute>} />
           <Route path="/teacher/create-quiz/:courseId" element={<PrivateRoute role="TEACHER"><CreateQuiz /></PrivateRoute>} />

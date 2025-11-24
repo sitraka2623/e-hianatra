@@ -151,4 +151,61 @@ router.get('/:id/assignments', authenticateToken, async (req, res) => {
   }
 })
 
+// Modifier un cours (enseignant uniquement)
+router.put('/:id', authenticateToken, authorizeRoles('TEACHER', 'ADMIN'), async (req, res) => {
+  const { titre, description, categorie } = req.body
+
+  try {
+    // Vérifier que le cours appartient à l'enseignant
+    const [courses] = await pool.query(
+      'SELECT * FROM cours WHERE id_cours = ? AND id_enseignant = ?',
+      [req.params.id, req.user.id]
+    )
+
+    if (courses.length === 0) {
+      return res.status(403).json({ error: 'Vous n\'êtes pas autorisé à modifier ce cours' })
+    }
+
+    await pool.query(
+      'UPDATE cours SET titre = ?, description = ?, categorie = ? WHERE id_cours = ?',
+      [titre, description, categorie, req.params.id]
+    )
+
+    res.json({ message: 'Cours modifié avec succès' })
+  } catch (error) {
+    console.error('Erreur:', error)
+    res.status(500).json({ error: 'Erreur lors de la modification du cours' })
+  }
+})
+
+// Supprimer un cours (enseignant uniquement)
+router.delete('/:id', authenticateToken, authorizeRoles('TEACHER', 'ADMIN'), async (req, res) => {
+  try {
+    // Vérifier que le cours appartient à l'enseignant
+    const [courses] = await pool.query(
+      'SELECT * FROM cours WHERE id_cours = ? AND id_enseignant = ?',
+      [req.params.id, req.user.id]
+    )
+
+    if (courses.length === 0) {
+      return res.status(403).json({ error: 'Vous n\'êtes pas autorisé à supprimer ce cours' })
+    }
+
+    // Supprimer les données liées (en cascade)
+    await pool.query('DELETE FROM soumissions_devoirs WHERE id_devoir IN (SELECT id_devoir FROM devoirs WHERE id_cours = ?)', [req.params.id])
+    await pool.query('DELETE FROM devoirs WHERE id_cours = ?', [req.params.id])
+    await pool.query('DELETE FROM reponse_quiz WHERE id_quiz IN (SELECT id_quiz FROM quiz WHERE id_cours = ?)', [req.params.id])
+    await pool.query('DELETE FROM question_quiz WHERE id_quiz IN (SELECT id_quiz FROM quiz WHERE id_cours = ?)', [req.params.id])
+    await pool.query('DELETE FROM quiz WHERE id_cours = ?', [req.params.id])
+    await pool.query('DELETE FROM chapitre WHERE id_cours = ?', [req.params.id])
+    await pool.query('DELETE FROM inscription WHERE id_cours = ?', [req.params.id])
+    await pool.query('DELETE FROM cours WHERE id_cours = ?', [req.params.id])
+
+    res.json({ message: 'Cours supprimé avec succès' })
+  } catch (error) {
+    console.error('Erreur:', error)
+    res.status(500).json({ error: 'Erreur lors de la suppression du cours' })
+  }
+})
+
 export default router

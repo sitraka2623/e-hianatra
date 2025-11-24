@@ -27,8 +27,7 @@ const TeacherDashboard = () => {
   }
 
   const handleEditCourse = (courseId) => {
-    // TODO: Implémenter la page d'édition
-    alert('Fonctionnalité de modification en cours de développement')
+    window.location.href = `/teacher/edit-course/${courseId}`
   }
 
   const handleDeleteCourse = async (courseId) => {
