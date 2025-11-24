@@ -210,7 +210,14 @@ router.delete('/:id', authenticateToken, authorizeRoles('TEACHER', 'ADMIN'), asy
     // Supprimer les réponses et questions de quiz
     if (quizzes.length > 0) {
       const quizIds = quizzes.map(q => q.id_quiz)
-      await connection.query('DELETE FROM reponses_quiz WHERE id_quiz IN (?)', [quizIds])
+      
+      // Récupérer les IDs des questions pour supprimer les réponses
+      const [questions] = await connection.query('SELECT id_question FROM questions_quiz WHERE id_quiz IN (?)', [quizIds])
+      if (questions.length > 0) {
+        const questionIds = questions.map(q => q.id_question)
+        await connection.query('DELETE FROM reponses_quiz WHERE id_question IN (?)', [questionIds])
+      }
+      
       await connection.query('DELETE FROM questions_quiz WHERE id_quiz IN (?)', [quizIds])
     }
 
