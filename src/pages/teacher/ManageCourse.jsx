@@ -152,18 +152,24 @@ const ManageCourse = () => {
               <div>
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-gray-800">Quiz</h2>
-                  <button className="bg-primary-600 text-white px-6 py-3 rounded-xl hover:bg-primary-700 transition-all flex items-center font-semibold">
+                  <Link
+                    to={`/teacher/create-quiz/${id}`}
+                    className="bg-primary-600 text-white px-6 py-3 rounded-xl hover:bg-primary-700 transition-all flex items-center font-semibold"
+                  >
                     <FiPlus className="mr-2" /> Créer un Quiz
-                  </button>
+                  </Link>
                 </div>
 
                 {quizzes.length === 0 ? (
                   <div className="text-center py-12 bg-gray-50 rounded-xl">
                     <FiCheckSquare className="text-gray-400 text-5xl mx-auto mb-4" />
                     <p className="text-gray-600 mb-4">Aucun quiz pour le moment</p>
-                    <button className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700">
+                    <Link
+                      to={`/teacher/create-quiz/${id}`}
+                      className="inline-block bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700"
+                    >
                       Créer le Premier Quiz
-                    </button>
+                    </Link>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -192,18 +198,24 @@ const ManageCourse = () => {
               <div>
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-gray-800">Devoirs</h2>
-                  <button className="bg-primary-600 text-white px-6 py-3 rounded-xl hover:bg-primary-700 transition-all flex items-center font-semibold">
+                  <Link
+                    to={`/teacher/create-assignment/${id}`}
+                    className="bg-primary-600 text-white px-6 py-3 rounded-xl hover:bg-primary-700 transition-all flex items-center font-semibold"
+                  >
                     <FiPlus className="mr-2" /> Créer un Devoir
-                  </button>
+                  </Link>
                 </div>
 
                 {assignments.length === 0 ? (
                   <div className="text-center py-12 bg-gray-50 rounded-xl">
                     <FiFileText className="text-gray-400 text-5xl mx-auto mb-4" />
                     <p className="text-gray-600 mb-4">Aucun devoir pour le moment</p>
-                    <button className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700">
+                    <Link
+                      to={`/teacher/create-assignment/${id}`}
+                      className="inline-block bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700"
+                    >
                       Créer le Premier Devoir
-                    </button>
+                    </Link>
                   </div>
                 ) : (
                   <div className="space-y-4">

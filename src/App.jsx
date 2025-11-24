@@ -14,6 +14,8 @@ import TeacherDashboard from './pages/teacher/Dashboard'
 import CreateCourse from './pages/teacher/CreateCourse'
 import ManageCourse from './pages/teacher/ManageCourse'
 import CreateChapter from './pages/teacher/CreateChapter'
+import CreateQuiz from './pages/teacher/CreateQuiz'
+import CreateAssignment from './pages/teacher/CreateAssignment'
 import Corrections from './pages/teacher/Corrections'
 import AdminDashboard from './pages/admin/Dashboard'
 import CourseList from './pages/CourseList'
@@ -43,6 +45,8 @@ function App() {
           <Route path="/teacher/create-course" element={<PrivateRoute role="TEACHER"><CreateCourse /></PrivateRoute>} />
           <Route path="/teacher/manage-course/:id" element={<PrivateRoute role="TEACHER"><ManageCourse /></PrivateRoute>} />
           <Route path="/teacher/create-chapter/:courseId" element={<PrivateRoute role="TEACHER"><CreateChapter /></PrivateRoute>} />
+          <Route path="/teacher/create-quiz/:courseId" element={<PrivateRoute role="TEACHER"><CreateQuiz /></PrivateRoute>} />
+          <Route path="/teacher/create-assignment/:courseId" element={<PrivateRoute role="TEACHER"><CreateAssignment /></PrivateRoute>} />
           <Route path="/teacher/corrections" element={<PrivateRoute role="TEACHER"><Corrections /></PrivateRoute>} />
           
           {/* Routes Admin */}
