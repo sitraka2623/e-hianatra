@@ -26,6 +26,24 @@ const TeacherDashboard = () => {
     }
   }
 
+  const handleEditCourse = (courseId) => {
+    // TODO: Implémenter la page d'édition
+    alert('Fonctionnalité de modification en cours de développement')
+  }
+
+  const handleDeleteCourse = async (courseId) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce cours ? Cette action est irréversible.')) {
+      try {
+        await api.delete(`/courses/${courseId}`)
+        alert('Cours supprimé avec succès!')
+        fetchDashboardData() // Recharger la liste
+      } catch (error) {
+        console.error('Erreur:', error)
+        alert('Erreur lors de la suppression du cours')
+      }
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -88,14 +106,30 @@ const TeacherDashboard = () => {
                 <div key={course.id_cours} className="border-2 border-gray-200 rounded-xl p-6 hover:border-primary-300 hover:shadow-lg transition-all">
                   <h3 className="font-bold text-lg mb-2 text-gray-800">{course.titre}</h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{course.description}</p>
-                  <div className="flex justify-between items-center">
+                  <div className="mb-3">
                     <span className="text-sm text-gray-500 font-medium">{course.studentCount || 0} étudiants</span>
+                  </div>
+                  <div className="flex gap-2">
                     <Link 
                       to={`/teacher/manage-course/${course.id_cours}`} 
-                      className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors text-sm font-semibold"
+                      className="flex-1 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors text-sm font-semibold text-center"
                     >
                       Gérer
                     </Link>
+                    <button
+                      onClick={() => handleEditCourse(course.id_cours)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
+                      title="Modifier"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCourse(course.id_cours)}
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-semibold"
+                      title="Supprimer"
+                    >
+                      🗑️
+                    </button>
                   </div>
                 </div>
               ))}
