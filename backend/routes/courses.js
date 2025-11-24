@@ -9,10 +9,10 @@ router.get('/', authenticateToken, async (req, res) => {
   try {
     const [courses] = await pool.query(`
       SELECT c.*, u.nom as enseignant_nom, u.prenom as enseignant_prenom,
-             COUNT(DISTINCT i.id_etudiant) as studentCount
+             COUNT(DISTINCT i.id_user) as studentCount
       FROM cours c
       LEFT JOIN utilisateur u ON c.id_enseignant = u.id_user
-      LEFT JOIN inscription i ON c.id_cours = i.id_cours
+      LEFT JOIN inscriptions i ON c.id_cours = i.id_cours
       GROUP BY c.id_cours
       ORDER BY c.id_cours DESC
     `)
@@ -69,7 +69,7 @@ router.post('/:id/enroll', authenticateToken, authorizeRoles('STUDENT'), async (
   try {
     // Vérifier si déjà inscrit
     const [existing] = await pool.query(
-      'SELECT * FROM inscription WHERE id_cours = ? AND id_etudiant = ?',
+      'SELECT * FROM inscriptions WHERE id_cours = ? AND id_user = ?',
       [req.params.id, req.user.id]
     )
 
@@ -78,7 +78,7 @@ router.post('/:id/enroll', authenticateToken, authorizeRoles('STUDENT'), async (
     }
 
     await pool.query(
-      'INSERT INTO inscription (id_cours, id_etudiant, date_inscription) VALUES (?, ?, NOW())',
+      'INSERT INTO inscriptions (id_cours, id_user, date_inscription) VALUES (?, ?, NOW())',
       [req.params.id, req.user.id]
     )
 
@@ -194,11 +194,11 @@ router.delete('/:id', authenticateToken, authorizeRoles('TEACHER', 'ADMIN'), asy
     // Supprimer les données liées (en cascade)
     await pool.query('DELETE FROM soumissions_devoirs WHERE id_devoir IN (SELECT id_devoir FROM devoirs WHERE id_cours = ?)', [req.params.id])
     await pool.query('DELETE FROM devoirs WHERE id_cours = ?', [req.params.id])
-    await pool.query('DELETE FROM reponse_quiz WHERE id_quiz IN (SELECT id_quiz FROM quiz WHERE id_cours = ?)', [req.params.id])
-    await pool.query('DELETE FROM question_quiz WHERE id_quiz IN (SELECT id_quiz FROM quiz WHERE id_cours = ?)', [req.params.id])
+    await pool.query('DELETE FROM reponses_quiz WHERE id_quiz IN (SELECT id_quiz FROM quiz WHERE id_cours = ?)', [req.params.id])
+    await pool.query('DELETE FROM questions_quiz WHERE id_quiz IN (SELECT id_quiz FROM quiz WHERE id_cours = ?)', [req.params.id])
     await pool.query('DELETE FROM quiz WHERE id_cours = ?', [req.params.id])
     await pool.query('DELETE FROM chapitre WHERE id_cours = ?', [req.params.id])
-    await pool.query('DELETE FROM inscription WHERE id_cours = ?', [req.params.id])
+    await pool.query('DELETE FROM inscriptions WHERE id_cours = ?', [req.params.id])
     await pool.query('DELETE FROM cours WHERE id_cours = ?', [req.params.id])
 
     res.json({ message: 'Cours supprimé avec succès' })

@@ -27,19 +27,11 @@ router.get('/:id', authenticateToken, async (req, res) => {
 router.get('/:id/questions', authenticateToken, async (req, res) => {
   try {
     const [questions] = await pool.query(
-      'SELECT * FROM question WHERE id_quiz = ?',
+      'SELECT * FROM questions_quiz WHERE id_quiz = ?',
       [req.params.id]
     )
 
-    // Récupérer les options pour chaque question
-    for (let question of questions) {
-      const [options] = await pool.query(
-        'SELECT * FROM option_question WHERE id_question = ?',
-        [question.id_question]
-      )
-      question.options = options
-    }
-
+    // Les options sont stockées en JSON dans la colonne options
     res.json(questions)
   } catch (error) {
     console.error('Erreur:', error)
@@ -55,19 +47,27 @@ router.post('/:id/submit', authenticateToken, async (req, res) => {
     let correctAnswers = 0
     let totalQuestions = 0
 
-    for (const [questionId, optionId] of Object.entries(answers)) {
-      const [options] = await pool.query(
-        'SELECT est_correct FROM option_question WHERE id_option = ?',
-        [optionId]
+    for (const [questionId, answer] of Object.entries(answers)) {
+      const [questions] = await pool.query(
+        'SELECT reponse_correcte FROM questions_quiz WHERE id_question = ?',
+        [questionId]
       )
 
-      if (options.length > 0 && options[0].est_correct) {
-        correctAnswers++
+      if (questions.length > 0) {
+        totalQuestions++
+        if (questions[0].reponse_correcte === answer) {
+          correctAnswers++
+        }
+        
+        // Enregistrer la réponse
+        await pool.query(
+          'INSERT INTO reponses_quiz (id_question, id_user, reponse, est_correcte) VALUES (?, ?, ?, ?)',
+          [questionId, req.user.id, answer, questions[0].reponse_correcte === answer]
+        )
       }
-      totalQuestions++
     }
 
-    const score = Math.round((correctAnswers / totalQuestions) * 100)
+    const score = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0
 
     res.json({ 
       score,
