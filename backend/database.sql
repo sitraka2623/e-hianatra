@@ -1,6 +1,6 @@
 -- Base de données e-Hianatra
--- Créer la base de données
-CREATE DATABASE IF NOT EXISTS e_hianatra;
+-- Créer la base de données avec encodage UTF-8
+CREATE DATABASE IF NOT EXISTS e_hianatra CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE e_hianatra;
 
 -- Table utilisateur
