@@ -64,8 +64,8 @@ router.get('/teacher/dashboard', authenticateToken, authorizeRoles('TEACHER'), a
 
     const [pendingAssignments] = await pool.query(`
       SELECT COUNT(*) as total
-      FROM soumission s
-      INNER JOIN devoir d ON s.id_devoir = d.id_devoir
+      FROM soumissions_devoirs s
+      INNER JOIN devoirs d ON s.id_devoir = d.id_devoir
       INNER JOIN cours c ON d.id_cours = c.id_cours
       WHERE c.id_enseignant = ? AND s.note IS NULL
     `, [req.user.id])
