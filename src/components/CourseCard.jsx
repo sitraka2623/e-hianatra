@@ -27,27 +27,27 @@ const CourseCard = ({ course }) => {
   return (
     <Link to={`/courses/${course.id_cours}`} className="block group">
       <div className="bg-white rounded-2xl shadow-soft hover:shadow-xl transition-all duration-300 overflow-hidden group-hover:-translate-y-2">
-        <div className="h-48 relative overflow-hidden">
+        <div className="h-40 sm:h-48 relative overflow-hidden">
           <img 
             src={getCategoryImage(course.categorie)} 
             alt={course.titre}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-          <div className="absolute bottom-4 left-4 right-4">
-            <span className="text-xs font-semibold bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full">
+          <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4">
+            <span className="text-xs font-semibold bg-white/90 backdrop-blur-sm text-gray-800 px-2.5 sm:px-3 py-1 rounded-full">
               {course.categorie}
             </span>
           </div>
         </div>
-        <div className="p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-1">
+        <div className="p-4 sm:p-6">
+          <h3 className="text-base sm:text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2">
             {course.titre}
           </h3>
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
+          <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 leading-relaxed">
             {course.description}
           </p>
-          <div className="flex items-center text-gray-500 text-sm">
+          <div className="flex items-center text-gray-500 text-xs sm:text-sm">
             <FiUser className="mr-1" />
             <span>{t('common.teacher')}</span>
           </div>

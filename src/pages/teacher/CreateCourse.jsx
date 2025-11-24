@@ -55,24 +55,24 @@ const CreateCourse = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Créer un Nouveau Cours</h1>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-3">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Créer un Nouveau Cours</h1>
           <button
             onClick={() => navigate('/teacher/dashboard')}
-            className="text-gray-600 hover:text-gray-800 flex items-center"
+            className="text-gray-600 hover:text-gray-800 flex items-center text-sm sm:text-base"
           >
             <FiX className="mr-1" /> Annuler
           </button>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm sm:text-base">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-soft p-8">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-soft p-4 sm:p-6 md:p-8">
           <div className="space-y-6">
             {/* Titre */}
             <div>
@@ -126,18 +126,18 @@ const CreateCourse = () => {
             </div>
 
             {/* Boutons */}
-            <div className="flex justify-end space-x-4 pt-4">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 sm:space-x-4 pt-4">
               <button
                 type="button"
                 onClick={() => navigate('/teacher/dashboard')}
-                className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all font-semibold"
+                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all font-semibold text-sm sm:text-base"
               >
                 Annuler
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-8 py-3 rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                className="w-full sm:w-auto bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
               >
                 <FiSave className="mr-2" />
                 {loading ? 'Création...' : 'Créer le Cours'}
@@ -147,8 +147,8 @@ const CreateCourse = () => {
         </form>
 
         {/* Info */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
-          <p className="text-sm text-blue-800">
+        <div className="mt-4 sm:mt-6 bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4">
+          <p className="text-xs sm:text-sm text-blue-800">
             <strong>💡 Astuce :</strong> Après avoir créé le cours, vous pourrez ajouter des chapitres, des quiz et des devoirs depuis la page de gestion du cours.
           </p>
         </div>
