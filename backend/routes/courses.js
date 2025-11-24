@@ -180,31 +180,70 @@ router.put('/:id', authenticateToken, authorizeRoles('TEACHER', 'ADMIN'), async 
 
 // Supprimer un cours (enseignant uniquement)
 router.delete('/:id', authenticateToken, authorizeRoles('TEACHER', 'ADMIN'), async (req, res) => {
+  const connection = await pool.getConnection()
+  
   try {
+    await connection.beginTransaction()
+
     // Vérifier que le cours appartient à l'enseignant
-    const [courses] = await pool.query(
+    const [courses] = await connection.query(
       'SELECT * FROM cours WHERE id_cours = ? AND id_enseignant = ?',
       [req.params.id, req.user.id]
     )
 
     if (courses.length === 0) {
+      await connection.rollback()
+      connection.release()
       return res.status(403).json({ error: 'Vous n\'êtes pas autorisé à supprimer ce cours' })
     }
 
-    // Supprimer les données liées (en cascade)
-    await pool.query('DELETE FROM soumissions_devoirs WHERE id_devoir IN (SELECT id_devoir FROM devoirs WHERE id_cours = ?)', [req.params.id])
-    await pool.query('DELETE FROM devoirs WHERE id_cours = ?', [req.params.id])
-    await pool.query('DELETE FROM reponses_quiz WHERE id_quiz IN (SELECT id_quiz FROM quiz WHERE id_cours = ?)', [req.params.id])
-    await pool.query('DELETE FROM questions_quiz WHERE id_quiz IN (SELECT id_quiz FROM quiz WHERE id_cours = ?)', [req.params.id])
-    await pool.query('DELETE FROM quiz WHERE id_cours = ?', [req.params.id])
-    await pool.query('DELETE FROM chapitre WHERE id_cours = ?', [req.params.id])
-    await pool.query('DELETE FROM inscriptions WHERE id_cours = ?', [req.params.id])
-    await pool.query('DELETE FROM cours WHERE id_cours = ?', [req.params.id])
+    // Récupérer les IDs des devoirs et quiz pour supprimer leurs dépendances
+    const [devoirs] = await connection.query('SELECT id_devoir FROM devoirs WHERE id_cours = ?', [req.params.id])
+    const [quizzes] = await connection.query('SELECT id_quiz FROM quiz WHERE id_cours = ?', [req.params.id])
+
+    // Supprimer les soumissions de devoirs
+    if (devoirs.length > 0) {
+      const devoirIds = devoirs.map(d => d.id_devoir)
+      await connection.query('DELETE FROM soumissions_devoirs WHERE id_devoir IN (?)', [devoirIds])
+    }
+
+    // Supprimer les réponses et questions de quiz
+    if (quizzes.length > 0) {
+      const quizIds = quizzes.map(q => q.id_quiz)
+      await connection.query('DELETE FROM reponses_quiz WHERE id_quiz IN (?)', [quizIds])
+      await connection.query('DELETE FROM questions_quiz WHERE id_quiz IN (?)', [quizIds])
+    }
+
+    // Récupérer les IDs des chapitres pour supprimer la progression
+    const [chapitres] = await connection.query('SELECT id_chapitre FROM chapitre WHERE id_cours = ?', [req.params.id])
+    
+    // Supprimer la progression des chapitres
+    if (chapitres.length > 0) {
+      const chapitreIds = chapitres.map(c => c.id_chapitre)
+      await connection.query('DELETE FROM progression WHERE id_chapitre IN (?)', [chapitreIds])
+    }
+
+    // Supprimer les données liées au cours
+    await connection.query('DELETE FROM devoirs WHERE id_cours = ?', [req.params.id])
+    await connection.query('DELETE FROM quiz WHERE id_cours = ?', [req.params.id])
+    await connection.query('DELETE FROM chapitre WHERE id_cours = ?', [req.params.id])
+    await connection.query('DELETE FROM inscriptions WHERE id_cours = ?', [req.params.id])
+    
+    // Supprimer le cours
+    await connection.query('DELETE FROM cours WHERE id_cours = ?', [req.params.id])
+
+    await connection.commit()
+    connection.release()
 
     res.json({ message: 'Cours supprimé avec succès' })
   } catch (error) {
-    console.error('Erreur:', error)
-    res.status(500).json({ error: 'Erreur lors de la suppression du cours' })
+    await connection.rollback()
+    connection.release()
+    console.error('Erreur lors de la suppression:', error)
+    res.status(500).json({ 
+      error: 'Erreur lors de la suppression du cours',
+      details: error.message 
+    })
   }
 })
 
