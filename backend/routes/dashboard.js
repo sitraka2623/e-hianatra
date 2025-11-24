@@ -12,8 +12,8 @@ router.get('/student/dashboard', authenticateToken, authorizeRoles('STUDENT'), a
       SELECT c.*, 
              (SELECT COUNT(*) FROM chapitre WHERE id_cours = c.id_cours) as totalChapters
       FROM cours c
-      INNER JOIN inscription i ON c.id_cours = i.id_cours
-      WHERE i.id_etudiant = ?
+      INNER JOIN inscriptions i ON c.id_cours = i.id_cours
+      WHERE i.id_user = ?
       ORDER BY i.date_inscription DESC
     `, [req.user.id])
 
@@ -23,8 +23,8 @@ router.get('/student/dashboard', authenticateToken, authorizeRoles('STUDENT'), a
         COUNT(DISTINCT i.id_cours) as enrolledCourses,
         0 as completedCourses,
         COUNT(DISTINCT i.id_cours) as inProgressCourses
-      FROM inscription i
-      WHERE i.id_etudiant = ?
+      FROM inscriptions i
+      WHERE i.id_user = ?
     `, [req.user.id])
 
     res.json({
@@ -46,9 +46,9 @@ router.get('/teacher/dashboard', authenticateToken, authorizeRoles('TEACHER'), a
     // Cours créés
     const [courses] = await pool.query(`
       SELECT c.*,
-             COUNT(DISTINCT i.id_etudiant) as studentCount
+             COUNT(DISTINCT i.id_user) as studentCount
       FROM cours c
-      LEFT JOIN inscription i ON c.id_cours = i.id_cours
+      LEFT JOIN inscriptions i ON c.id_cours = i.id_cours
       WHERE c.id_enseignant = ?
       GROUP BY c.id_cours
       ORDER BY c.id_cours DESC
@@ -56,8 +56,8 @@ router.get('/teacher/dashboard', authenticateToken, authorizeRoles('TEACHER'), a
 
     // Statistiques
     const [totalStudents] = await pool.query(`
-      SELECT COUNT(DISTINCT i.id_etudiant) as total
-      FROM inscription i
+      SELECT COUNT(DISTINCT i.id_user) as total
+      FROM inscriptions i
       INNER JOIN cours c ON i.id_cours = c.id_cours
       WHERE c.id_enseignant = ?
     `, [req.user.id])
