@@ -141,7 +141,7 @@ router.get('/:id/quizzes', authenticateToken, async (req, res) => {
 router.get('/:id/assignments', authenticateToken, async (req, res) => {
   try {
     const [assignments] = await pool.query(
-      'SELECT * FROM devoir WHERE id_cours = ? ORDER BY date_limite DESC',
+      'SELECT * FROM devoirs WHERE id_cours = ? ORDER BY date_limite DESC',
       [req.params.id]
     )
     res.json(assignments)
