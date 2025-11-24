@@ -1,0 +1,48 @@
+========================================
+  DEPLOYER e-Hianatra sur VERCEL
+========================================
+
+✅ Votre code est sur GitHub!
+Repository: https://github.com/sitraka2623/e-hianatra
+
+========================================
+  PROCHAINES ETAPES
+========================================
+
+1. Allez sur: https://vercel.com
+
+2. Cliquez sur "Sign Up" ou "Login"
+
+3. Choisissez "Continue with GitHub"
+
+4. Cliquez sur "Add New..." → "Project"
+
+5. Sélectionnez "e-hianatra"
+
+6. Ajoutez cette variable d'environnement:
+   VITE_API_URL = http://localhost:3000/api
+
+7. Cliquez sur "Deploy"
+
+8. Attendez 2-3 minutes ⏱️
+
+9. Votre site sera en ligne! 🎉
+
+========================================
+  GUIDES DISPONIBLES
+========================================
+
+📖 DEPLOIEMENT_RAPIDE.md - Guide simplifié
+📖 DEPLOIEMENT_VERCEL.md - Guide complet
+🚀 DEPLOYER.bat - Script automatique
+
+========================================
+  IMPORTANT
+========================================
+
+⚠️ Le frontend sera en ligne, mais vous devrez
+   aussi déployer le backend et la base de données.
+
+Consultez DEPLOIEMENT_VERCEL.md pour les détails.
+
+========================================
